@@ -1,4 +1,4 @@
-import PerimetrosMusculares from "../models/PerimetrosMusculares.js";
+import PerimetrosMusculares from "../models/perimetros_musculares.js";
 
 const httpPerimetrosMusculares = {
   // Obtener todos los registros de perímetros musculares
@@ -123,7 +123,7 @@ const httpPerimetrosMusculares = {
     }
   },
 
-  // Eliminar un registro de perímetros musculares (cambio de estado)
+
   inactivar: async (req, res) => {
     try {
       const { id } = req.params;
@@ -150,7 +150,7 @@ const httpPerimetrosMusculares = {
     }
   },
 
-  // Reactivar un registro de datos antropométricos
+
   activar: async (req, res) => {
     try {
       const { id } = req.params;

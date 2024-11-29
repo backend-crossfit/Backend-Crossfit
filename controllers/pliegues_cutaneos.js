@@ -1,4 +1,4 @@
-import PliegueCutaneo from "../models/PliegueCutaneo.js";
+import PliegueCutaneo from "../models/pliegues_cutaneos.js";
 
 const httpPlieguesCutaneos = {
   // Obtener todos los registros de pliegues cutáneos

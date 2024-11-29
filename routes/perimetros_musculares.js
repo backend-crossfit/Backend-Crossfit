@@ -59,14 +59,24 @@ router.put(
   httpPerimetrosMusculares.editar
 );
 
-// Eliminar un registro de perímetros musculares
-router.delete(
-  "/eliminar/:id",
+// Inactivar un dato antropométrico (cambio de estado a falso)
+router.put(
+  "/inactivar/:id",
   [
     check("id", "El ID no es válido").isMongoId(),
     validarCampos,
   ],
-  httpPerimetrosMusculares.eliminar
+  httpPerimetrosMusculares.inactivar
+);
+
+// Activar un dato antropométrico (cambio de estado a verdadero)
+router.put(
+  "/activar/:id",
+  [
+    check("id", "El ID no es válido").isMongoId(),
+    validarCampos,
+  ],
+  httpPerimetrosMusculares.activar
 );
 
 export default router;

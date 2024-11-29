@@ -1,4 +1,4 @@
-import DatosAntropometricos from "../models/DatosAntropometricos.js";
+import DatosAntropometricos from "../models/datos_antropometricos.js";
 
 const httpDatosAntropometricos = {
   // Obtener todos los datos antropométricos
