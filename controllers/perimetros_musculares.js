@@ -5,7 +5,7 @@ const httpPerimetrosMusculares = {
   getAll: async (req, res) => {
     try {
       const registros = await PerimetrosMusculares.find().populate(
-        "idCliente",
+        "idUsuario",
         "nombre apellido correo"
       );
       res.json(registros);
@@ -21,7 +21,7 @@ const httpPerimetrosMusculares = {
     try {
       const { id } = req.params;
       const registro = await PerimetrosMusculares.findById(id).populate(
-        "idCliente",
+        "idUsuario",
         "nombre apellido correo"
       );
 
@@ -51,7 +51,7 @@ const httpPerimetrosMusculares = {
         cadera,
         muslo_mayor,
         pantorrilla,
-        idCliente,
+        idUsuario,
       } = req.body;
 
       const nuevoRegistro = new PerimetrosMusculares({
@@ -65,7 +65,7 @@ const httpPerimetrosMusculares = {
         cadera,
         muslo_mayor,
         pantorrilla,
-        idCliente,
+        idUsuario,
       });
 
       await nuevoRegistro.save();

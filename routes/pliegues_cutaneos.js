@@ -30,7 +30,7 @@ router.post(
     check("pectoral", "El pliegue pectoral es obligatorio y debe ser un número").optional().isNumeric(),
     check("pierna", "El pliegue de la pierna es obligatorio y debe ser un número").optional().isNumeric(),
     check("pantorrilla", "El pliegue de la pantorrilla es obligatorio y debe ser un número").optional().isNumeric(),
-    check("idCliente", "El ID del cliente es obligatorio y debe ser un MongoId válido").not().isEmpty().isMongoId(),
+    check("idUsuario", "El ID del cliente es obligatorio y debe ser un MongoId válido").not().isEmpty().isMongoId(),
     validarCampos,
   ],
   httpPlieguesCutaneos.crear

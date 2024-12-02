@@ -4,7 +4,7 @@ const httpPlieguesCutaneos = {
   // Obtener todos los registros de pliegues cutáneos
   getAll: async (req, res) => {
     try {
-      const registros = await PliegueCutaneo.find().populate("idCliente", "nombre apellido correo");
+      const registros = await PliegueCutaneo.find().populate("idUsuario", "nombre apellido correo");
       res.json(registros);
     } catch (error) {
       res.status(500).json({ error: "Error al obtener los registros de pliegues cutáneos" });
@@ -15,7 +15,7 @@ const httpPlieguesCutaneos = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const registro = await PliegueCutaneo.findById(id).populate("idCliente", "nombre apellido correo");
+      const registro = await PliegueCutaneo.findById(id).populate("idUsuario", "nombre apellido correo");
 
       if (!registro) {
         return res.status(404).json({ error: "Registro no encontrado" });
@@ -39,7 +39,7 @@ const httpPlieguesCutaneos = {
         pectoral,
         pierna,
         pantorrilla,
-        idCliente,
+        idUsuario,
       } = req.body;
 
       const nuevoRegistro = new PliegueCutaneo({
@@ -51,7 +51,7 @@ const httpPlieguesCutaneos = {
         pectoral,
         pierna,
         pantorrilla,
-        idCliente,
+        idUsuario,
       });
 
       await nuevoRegistro.save();

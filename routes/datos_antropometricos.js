@@ -26,8 +26,8 @@ router.post(
     check("estatura", "La estatura debe ser un número").isNumeric(),
     check("peso", "El peso es obligatorio").not().isEmpty(),
     check("peso", "El peso debe ser un número").isNumeric(),
-    check("idCliente", "El ID del cliente es obligatorio").not().isEmpty(),
-    check("idCliente", "El ID del cliente no es válido").isMongoId(),
+    check("idUsuario", "El ID del cliente es obligatorio").not().isEmpty(),
+    check("idUsuario", "El ID del cliente no es válido").isMongoId(),
     validarCampos,
   ],
   httpDatosAntropometricos.crear

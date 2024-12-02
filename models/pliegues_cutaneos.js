@@ -9,7 +9,7 @@ const plieguesCutaneosSchema = new mongoose.Schema({
   pectoral: { type: Number }, 
   pierna: { type: Number }, 
   pantorrilla: { type: Number }, 
-  idCliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente", required: true },
+  idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario", required: true },
   estado: { type: Boolean, default: 1 },
   createAT: { type: Date, default: Date.now }, 
 });

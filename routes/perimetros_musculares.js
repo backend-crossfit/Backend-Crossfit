@@ -32,8 +32,8 @@ router.post(
     check("cadera", "El valor de cadera debe ser un número").optional().isNumeric(),
     check("muslo_mayor", "El valor de muslo mayor debe ser un número").optional().isNumeric(),
     check("pantorrilla", "El valor de pantorrilla debe ser un número").optional().isNumeric(),
-    check("idCliente", "El ID del cliente es obligatorio").not().isEmpty(),
-    check("idCliente", "El ID del cliente no es válido").isMongoId(),
+    check("idUsuario", "El ID del cliente es obligatorio").not().isEmpty(),
+    check("idUsuario", "El ID del cliente no es válido").isMongoId(),
     validarCampos,
   ],
   httpPerimetrosMusculares.crear

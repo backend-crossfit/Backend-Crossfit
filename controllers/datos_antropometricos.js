@@ -4,7 +4,7 @@ const httpDatosAntropometricos = {
   // Obtener todos los datos antropométricos
   getAll: async (req, res) => {
     try {
-      const datos = await DatosAntropometricos.find().populate("idCliente", "nombre apellido correo");
+      const datos = await DatosAntropometricos.find().populate("idUsuario", "nombre apellido correo");
       res.json(datos);
     } catch (error) {
       res.status(500).json({ error: "Error al obtener los datos antropométricos" });
@@ -15,7 +15,7 @@ const httpDatosAntropometricos = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const dato = await DatosAntropometricos.findById(id).populate("idCliente", "nombre apellido correo");
+      const dato = await DatosAntropometricos.findById(id).populate("idUsuario", "nombre apellido correo");
 
       if (!dato) {
         return res.status(404).json({ error: "Datos antropométricos no encontrados" });
@@ -30,12 +30,12 @@ const httpDatosAntropometricos = {
   // Crear un nuevo registro de datos antropométricos
   crear: async (req, res) => {
     try {
-      const { estatura, peso, idCliente } = req.body;
+      const { estatura, peso, idUsuario } = req.body;
 
       const nuevoDato = new DatosAntropometricos({
         estatura,
         peso,
-        idCliente,
+        idUsuario,
       });
 
       await nuevoDato.save();

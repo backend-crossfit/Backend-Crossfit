@@ -11,7 +11,7 @@ const perimetrosMuscularesSchema = new mongoose.Schema({
   cadera: { type: Number },
   muslo_mayor: { type: Number },
   pantorrilla: { type: Number },
-  idCliente: { type: mongoose.Schema.Types.ObjectId, ref: "Cliente", required: true }, 
+  idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario", required: true }, 
   createAT: { type: Date, default: Date.now },
 });
 
