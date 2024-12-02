@@ -44,7 +44,7 @@ const httpUsuario = {
   // Crear un usuario
   crearUsuario: async (req, res) => {
     try {
-      const { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo, password } = req.body;
+      const { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo, telefono, password } = req.body;
 
       const usuarioExistente = await Usuario.findOne({ correo });
       if (usuarioExistente) {
@@ -60,6 +60,7 @@ const httpUsuario = {
         rol,
         tipo_sexo,
         correo,
+        telefono,
         password,
         codigo_verificacion: generarCodigoAleatorio(),
       });
@@ -78,24 +79,42 @@ const httpUsuario = {
   // Actualizar un usuario
   editarUsuario: async (req, res) => {
     try {
-      const { id } = req.params;
-      const { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo } = req.body;
+        const { id } = req.params;
+        const { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo, telefono, password } = req.body;
 
-      const usuario = await Usuario.findByIdAndUpdate(
-        id,
-        { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo },
-        { new: true }
-      );
+        // Encontrar el usuario antes de actualizar
+        const usuario = await Usuario.findById(id);
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
-      if (!usuario) {
-        return res.status(404).json({ error: "Usuario no encontrado" });
-      }
+        // Actualizar los campos enviados en el cuerpo
+        if (nombre) usuario.nombre = nombre;
+        if (apellido) usuario.apellido = apellido;
+        if (tipo_documento) usuario.tipo_documento = tipo_documento;
+        if (num_documento) usuario.num_documento = num_documento;
+        if (edad) usuario.edad = edad;
+        if (rol) usuario.rol = rol;
+        if (tipo_sexo) usuario.tipo_sexo = tipo_sexo;
+        if (correo) usuario.correo = correo;
+        if (telefono) usuario.telefono = telefono;
 
-      res.json(usuario);
+        // Encriptar la contraseña solo si se envía una nueva
+        if (password) {
+            const salt = bcryptjs.genSaltSync();
+            usuario.password = bcryptjs.hashSync(password, salt);
+        }
+
+        // Guardar los cambios en la base de datos
+        const usuarioActualizado = await usuario.save();
+
+        res.json(usuarioActualizado);
     } catch (error) {
-      res.status(500).json({ error });
+        res.status(500).json({ error: error.message });
+        console.log(error);
     }
-  },
+},
+
 
   // Eliminar un usuario
   eliminarUsuario: async (req, res) => {
@@ -114,11 +133,11 @@ const httpUsuario = {
   // Login de usuario
   login: async (req, res) => {
     try {
-      const { correo, password } = req.body;
-      const usuario = await Usuario.findOne({ correo });
+      const { num_documento, password } = req.body;
+      const usuario = await Usuario.findOne({ num_documento });
 
       if (!usuario || !bcryptjs.compareSync(password, usuario.password)) {
-        return res.status(400).json({ error: "Correo o contraseña incorrectos" });
+        return res.status(400).json({ error: "Usuario o contraseña incorrectos" });
       }
 
       if (!usuario.estado) {

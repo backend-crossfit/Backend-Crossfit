@@ -9,6 +9,7 @@ const usuarioSchema = new mongoose.Schema({
   rol: { type: String, required: true }, 
   tipo_sexo: { type: String, required: true },
   correo: { type: String, required: true }, 
+  telefono: { type: Number, required: true },
   password: { type: String, required: true },
   codigo_verificacion: { type: String }, 
   estado: { type: Boolean, default: 1 },
