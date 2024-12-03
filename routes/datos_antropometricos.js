@@ -8,6 +8,8 @@ const router = new Router();
 // Obtener todos los datos antropométricos
 router.get("/all", httpDatosAntropometricos.getAll);
 
+router.get("/por-usuario/:idUsuario", httpDatosAntropometricos.getByIdUsuario);
+
 // Obtener un dato antropométrico por ID
 router.get(
   "/:id",
@@ -30,19 +32,7 @@ router.post(
     check("idUsuario", "El ID del cliente no es válido").isMongoId(),
     validarCampos,
   ],
-  httpDatosAntropometricos.crear
-);
-
-// Actualizar un dato antropométrico
-router.put(
-  "/editar/:id",
-  [
-    check("id", "El ID no es válido").isMongoId(),
-    check("estatura", "La estatura debe ser un número").optional().isNumeric(),
-    check("peso", "El peso debe ser un número").optional().isNumeric(),
-    validarCampos,
-  ],
-  httpDatosAntropometricos.editar
+  httpDatosAntropometricos.crearOActualizarDatosAntropometricos
 );
 
 // Inactivar un dato antropométrico (cambio de estado a falso)

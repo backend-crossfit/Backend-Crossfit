@@ -27,44 +27,24 @@ const httpPlieguesCutaneos = {
     }
   },
 
-  // Crear un nuevo registro de pliegues cutáneos
-  crear: async (req, res) => {
+  // Obtener pliegues cutaneos por idUsuario
+  getByIdUsuario: async (req, res) => {
     try {
-      const {
-        biceps,
-        triceps,
-        escapula,
-        abdomen,
-        suprailiaco,
-        pectoral,
-        pierna,
-        pantorrilla,
-        idUsuario,
-      } = req.body;
+      const { idUsuario } = req.params;
+      const datos = await PliegueCutaneo.find({ idUsuario })
 
-      const nuevoRegistro = new PliegueCutaneo({
-        biceps,
-        triceps,
-        escapula,
-        abdomen,
-        suprailiaco,
-        pectoral,
-        pierna,
-        pantorrilla,
-        idUsuario,
-      });
+      if (!datos || datos.length === 0) {
+        return res.status(404).json({ error: "No se encontraron pliegues cutaneos para este usuario" });
+      }
 
-      await nuevoRegistro.save();
-      res.status(201).json(nuevoRegistro);
+      res.json(datos);
     } catch (error) {
-      res.status(500).json({ error: "Error al crear el registro de pliegues cutáneos" });
+      res.status(500).json({ error: "Error al obtener los pliegues cutaneos por idUsuario" });
     }
   },
 
-  // Actualizar un registro de pliegues cutáneos
-  editar: async (req, res) => {
+  crearOActualizarPlieguesCutaneos: async (req, res) => {
     try {
-      const { id } = req.params;
       const {
         biceps,
         triceps,
@@ -74,11 +54,32 @@ const httpPlieguesCutaneos = {
         pectoral,
         pierna,
         pantorrilla,
+        idUsuario,
       } = req.body;
 
-      const registroActualizado = await PliegueCutaneo.findByIdAndUpdate(
-        id,
-        {
+      // Buscar si ya existe un registro para el idUsuario
+      let registro = await PliegueCutaneo.findOne({ idUsuario });
+
+      if (registro) {
+        // Actualizar registro existente
+        registro = await PliegueCutaneo.findByIdAndUpdate(
+          registro._id,
+          {
+            biceps,
+            triceps,
+            escapula,
+            abdomen,
+            suprailiaco,
+            pectoral,
+            pierna,
+            pantorrilla,
+          },
+          { new: true } // Retornar el documento actualizado
+        );
+        res.json(registro);
+      } else {
+        // Crear un nuevo registro si no existe
+        registro = new PliegueCutaneo({
           biceps,
           triceps,
           escapula,
@@ -87,17 +88,14 @@ const httpPlieguesCutaneos = {
           pectoral,
           pierna,
           pantorrilla,
-        },
-        { new: true }
-      );
-
-      if (!registroActualizado) {
-        return res.status(404).json({ error: "Registro no encontrado" });
+          idUsuario,
+        });
+        await registro.save();
+        res.json(registro);
       }
-
-      res.json(registroActualizado);
     } catch (error) {
-      res.status(500).json({ error: "Error al actualizar el registro de pliegues cutáneos" });
+      console.error("Error al gestionar el registro de pliegues cutáneos:", error);
+      res.status(500).json({ error: "Error al gestionar el registro de pliegues cutáneos" });
     }
   },
 

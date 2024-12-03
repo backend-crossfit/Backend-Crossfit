@@ -4,7 +4,7 @@ const httpDatosAntropometricos = {
   // Obtener todos los datos antropométricos
   getAll: async (req, res) => {
     try {
-      const datos = await DatosAntropometricos.find().populate("idUsuario", "nombre apellido correo");
+      const datos = await DatosAntropometricos.find().populate("idUsuario");
       res.json(datos);
     } catch (error) {
       res.status(500).json({ error: "Error al obtener los datos antropométricos" });
@@ -15,7 +15,7 @@ const httpDatosAntropometricos = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const dato = await DatosAntropometricos.findById(id).populate("idUsuario", "nombre apellido correo");
+      const dato = await DatosAntropometricos.findById(id).populate("idUsuario");
 
       if (!dato) {
         return res.status(404).json({ error: "Datos antropométricos no encontrados" });
@@ -27,43 +27,48 @@ const httpDatosAntropometricos = {
     }
   },
 
+    // Obtener datos antropométricos por idUsuario
+    getByIdUsuario: async (req, res) => {
+      try {
+        const { idUsuario } = req.params;
+        const datos = await DatosAntropometricos.find({ idUsuario })
+  
+        if (!datos || datos.length === 0) {
+          return res.status(404).json({ error: "No se encontraron datos antropométricos para este usuario" });
+        }
+  
+        res.json(datos);
+      } catch (error) {
+        res.status(500).json({ error: "Error al obtener los datos antropométricos por idUsuario" });
+      }
+    },
+  
+
   // Crear un nuevo registro de datos antropométricos
-  crear: async (req, res) => {
+  crearOActualizarDatosAntropometricos: async (req, res) => {
     try {
       const { estatura, peso, idUsuario } = req.body;
 
-      const nuevoDato = new DatosAntropometricos({
-        estatura,
-        peso,
-        idUsuario,
-      });
+      // Buscar si ya existe un registro para el idUsuario
+      let dato = await DatosAntropometricos.findOne({ idUsuario });
 
-      await nuevoDato.save();
-      res.status(201).json(nuevoDato);
-    } catch (error) {
-      res.status(500).json({ error: "Error al crear los datos antropométricos" });
-    }
-  },
-
-  // Actualizar un registro de datos antropométricos
-  editar: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { estatura, peso } = req.body;
-
-      const datoActualizado = await DatosAntropometricos.findByIdAndUpdate(
-        id,
-        { estatura, peso },
-        { new: true }
-      );
-
-      if (!datoActualizado) {
-        return res.status(404).json({ error: "Datos antropométricos no encontrados" });
+      if (dato) {
+        // Si existe, actualizar el registro
+        dato = await DatosAntropometricos.findByIdAndUpdate(
+          dato._id,
+          { estatura, peso },
+          { new: true } // Retornar el documento actualizado
+        );
+        res.json(dato);
+      } else {
+        // Si no existe, crear un nuevo registro
+        dato = new DatosAntropometricos({ estatura, peso, idUsuario });
+        await dato.save();
+        res.json(dato);
       }
-
-      res.json(datoActualizado);
     } catch (error) {
-      res.status(500).json({ error: "Error al actualizar los datos antropométricos" });
+      console.error("Error al crear o actualizar los datos antropométricos:", error);
+      res.status(500).json({ error: "Error al gestionar los datos antropométricos" });
     }
   },
 
@@ -82,7 +87,7 @@ const httpDatosAntropometricos = {
         return res.status(404).json({ error: "Datos antropométricos no encontrados" });
       }
 
-      res.json({ message: "Datos antropométricos inactivados", datoInactivado });
+      res.json(datoInactivado);
     } catch (error) {
       res.status(500).json({ error: "Error al inactivar los datos antropométricos" });
     }
@@ -103,7 +108,7 @@ const httpDatosAntropometricos = {
         return res.status(404).json({ error: "Datos antropométricos no encontrados" });
       }
 
-      res.json({ message: "Datos antropométricos activados", datoActivado });
+      res.json(datoActivado);
     } catch (error) {
       res.status(500).json({ error: "Error al activar los datos antropométricos" });
     }

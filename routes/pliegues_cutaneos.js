@@ -8,6 +8,8 @@ const router = new Router();
 // Obtener todos los registros de pliegues cutáneos
 router.get("/all", httpPlieguesCutaneos.getAll);
 
+router.get("/por-usuario/:idUsuario", httpPlieguesCutaneos.getByIdUsuario);
+
 // Obtener un registro de pliegues cutáneos por ID
 router.get(
   "/:id",
@@ -17,6 +19,8 @@ router.get(
   ],
   httpPlieguesCutaneos.getById
 );
+
+
 
 // Crear un nuevo registro de pliegues cutáneos
 router.post(
@@ -33,25 +37,7 @@ router.post(
     check("idUsuario", "El ID del cliente es obligatorio y debe ser un MongoId válido").not().isEmpty().isMongoId(),
     validarCampos,
   ],
-  httpPlieguesCutaneos.crear
-);
-
-// Actualizar un registro de pliegues cutáneos
-router.put(
-  "/editar/:id",
-  [
-    check("id", "El ID no es válido").isMongoId(),
-    check("biceps", "El pliegue del bíceps debe ser un número").optional().isNumeric(),
-    check("triceps", "El pliegue del tríceps debe ser un número").optional().isNumeric(),
-    check("escapula", "El pliegue de la escápula debe ser un número").optional().isNumeric(),
-    check("abdomen", "El pliegue abdominal debe ser un número").optional().isNumeric(),
-    check("suprailiaco", "El pliegue suprailíaco debe ser un número").optional().isNumeric(),
-    check("pectoral", "El pliegue pectoral debe ser un número").optional().isNumeric(),
-    check("pierna", "El pliegue de la pierna debe ser un número").optional().isNumeric(),
-    check("pantorrilla", "El pliegue de la pantorrilla debe ser un número").optional().isNumeric(),
-    validarCampos,
-  ],
-  httpPlieguesCutaneos.editar
+  httpPlieguesCutaneos.crearOActualizarPlieguesCutaneos
 );
 
 // Inactivar un registro de pliegues cutáneos

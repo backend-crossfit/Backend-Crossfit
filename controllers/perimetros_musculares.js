@@ -37,50 +37,24 @@ const httpPerimetrosMusculares = {
     }
   },
 
-  // Crear un nuevo registro de perímetros musculares
-  crear: async (req, res) => {
+  // Obtener perimetros musculares por idUsuario
+  getByIdUsuario: async (req, res) => {
     try {
-      const {
-        pectoral,
-        hombro,
-        cuello,
-        biceps_relajado,
-        biceps_contraido,
-        abdomen,
-        cintura,
-        cadera,
-        muslo_mayor,
-        pantorrilla,
-        idUsuario,
-      } = req.body;
+      const { idUsuario } = req.params;
+      const datos = await PerimetrosMusculares.find({ idUsuario })
 
-      const nuevoRegistro = new PerimetrosMusculares({
-        pectoral,
-        hombro,
-        cuello,
-        biceps_relajado,
-        biceps_contraido,
-        abdomen,
-        cintura,
-        cadera,
-        muslo_mayor,
-        pantorrilla,
-        idUsuario,
-      });
+      if (!datos || datos.length === 0) {
+        return res.status(404).json({ error: "No se encontraron perimetros musculares para este usuario" });
+      }
 
-      await nuevoRegistro.save();
-      res.status(201).json(nuevoRegistro);
+      res.json(datos);
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "Error al crear el registro de perímetros musculares" });
+      res.status(500).json({ error: "Error al obtener los perimetros musculares por idUsuario" });
     }
   },
 
-  // Actualizar un registro de perímetros musculares
-  editar: async (req, res) => {
+  crearOActualizarPerimetrosMusculares: async (req, res) => {
     try {
-      const { id } = req.params;
       const {
         pectoral,
         hombro,
@@ -92,11 +66,34 @@ const httpPerimetrosMusculares = {
         cadera,
         muslo_mayor,
         pantorrilla,
+        idUsuario,
       } = req.body;
 
-      const registroActualizado = await PerimetrosMusculares.findByIdAndUpdate(
-        id,
-        {
+      // Buscar si ya existe un registro para el idUsuario
+      let registro = await PerimetrosMusculares.findOne({ idUsuario });
+
+      if (registro) {
+        // Actualizar registro existente
+        registro = await PerimetrosMusculares.findByIdAndUpdate(
+          registro._id,
+          {
+            pectoral,
+            hombro,
+            cuello,
+            biceps_relajado,
+            biceps_contraido,
+            abdomen,
+            cintura,
+            cadera,
+            muslo_mayor,
+            pantorrilla,
+          },
+          { new: true } // Retornar el documento actualizado
+        );
+        res.json(registro);
+      } else {
+        // Crear un nuevo registro si no existe
+        registro = new PerimetrosMusculares({
           pectoral,
           hombro,
           cuello,
@@ -107,19 +104,16 @@ const httpPerimetrosMusculares = {
           cadera,
           muslo_mayor,
           pantorrilla,
-        },
-        { new: true }
-      );
-
-      if (!registroActualizado) {
-        return res.status(404).json({ error: "Registro no encontrado" });
+          idUsuario,
+        });
+        await registro.save();
+        res.json(registro);
       }
-
-      res.json(registroActualizado);
     } catch (error) {
-      res.status(500).json({
-        error: "Error al actualizar el registro de perímetros musculares",
-      });
+      console.error("Error al gestionar el registro de perímetros musculares:", error);
+      res
+        .status(500)
+        .json({ error: "Error al gestionar el registro de perímetros musculares" });
     }
   },
 
