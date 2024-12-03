@@ -26,7 +26,6 @@ router.get(
   "/codigo-recuperar/:correo",
   [
     check("correo", "Por favor ingrese el correo").not().isEmpty(),
-    check("correo").custom(helpersUsuario.existeCorreo),
     validarCampos,
   ],
   httpUsuario.recuperarPassword

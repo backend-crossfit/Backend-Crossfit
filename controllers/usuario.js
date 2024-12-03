@@ -7,7 +7,9 @@ let codigoEnviado = {}; // Almacena temporalmente el código de verificación
 
 function generarCodigoAleatorio() {
   const primerDigito = Math.floor(Math.random() * 9) + 1;
-  const restoNumero = Math.floor(Math.random() * 100000).toString().padStart(5, "0");
+  const restoNumero = Math.floor(Math.random() * 100000)
+    .toString()
+    .padStart(5, "0");
   const numero = primerDigito + restoNumero;
   const fechaCreacion = new Date();
   codigoEnviado = { codigo: numero, fechaCreacion };
@@ -44,7 +46,18 @@ const httpUsuario = {
   // Crear un usuario
   crearUsuario: async (req, res) => {
     try {
-      const { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo, telefono, password } = req.body;
+      const {
+        nombre,
+        apellido,
+        tipo_documento,
+        num_documento,
+        edad,
+        rol,
+        tipo_sexo,
+        correo,
+        telefono,
+        password,
+      } = req.body;
 
       const usuarioExistente = await Usuario.findOne({ correo });
       if (usuarioExistente) {
@@ -79,42 +92,52 @@ const httpUsuario = {
   // Actualizar un usuario
   editarUsuario: async (req, res) => {
     try {
-        const { id } = req.params;
-        const { nombre, apellido, tipo_documento, num_documento, edad, rol, tipo_sexo, correo, telefono, password } = req.body;
+      const { id } = req.params;
+      const {
+        nombre,
+        apellido,
+        tipo_documento,
+        num_documento,
+        edad,
+        rol,
+        tipo_sexo,
+        correo,
+        telefono,
+        password,
+      } = req.body;
 
-        // Encontrar el usuario antes de actualizar
-        const usuario = await Usuario.findById(id);
-        if (!usuario) {
-            return res.status(404).json({ error: "Usuario no encontrado" });
-        }
+      // Encontrar el usuario antes de actualizar
+      const usuario = await Usuario.findById(id);
+      if (!usuario) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
 
-        // Actualizar los campos enviados en el cuerpo
-        if (nombre) usuario.nombre = nombre;
-        if (apellido) usuario.apellido = apellido;
-        if (tipo_documento) usuario.tipo_documento = tipo_documento;
-        if (num_documento) usuario.num_documento = num_documento;
-        if (edad) usuario.edad = edad;
-        if (rol) usuario.rol = rol;
-        if (tipo_sexo) usuario.tipo_sexo = tipo_sexo;
-        if (correo) usuario.correo = correo;
-        if (telefono) usuario.telefono = telefono;
+      // Actualizar los campos enviados en el cuerpo
+      if (nombre) usuario.nombre = nombre;
+      if (apellido) usuario.apellido = apellido;
+      if (tipo_documento) usuario.tipo_documento = tipo_documento;
+      if (num_documento) usuario.num_documento = num_documento;
+      if (edad) usuario.edad = edad;
+      if (rol) usuario.rol = rol;
+      if (tipo_sexo) usuario.tipo_sexo = tipo_sexo;
+      if (correo) usuario.correo = correo;
+      if (telefono) usuario.telefono = telefono;
 
-        // Encriptar la contraseña solo si se envía una nueva
-        if (password) {
-            const salt = bcryptjs.genSaltSync();
-            usuario.password = bcryptjs.hashSync(password, salt);
-        }
+      // Encriptar la contraseña solo si se envía una nueva
+      if (password) {
+        const salt = bcryptjs.genSaltSync();
+        usuario.password = bcryptjs.hashSync(password, salt);
+      }
 
-        // Guardar los cambios en la base de datos
-        const usuarioActualizado = await usuario.save();
+      // Guardar los cambios en la base de datos
+      const usuarioActualizado = await usuario.save();
 
-        res.json(usuarioActualizado);
+      res.json(usuarioActualizado);
     } catch (error) {
-        res.status(500).json({ error: error.message });
-        console.log(error);
+      res.status(500).json({ error: error.message });
+      console.log(error);
     }
-},
-
+  },
 
   // Eliminar un usuario
   eliminarUsuario: async (req, res) => {
@@ -137,7 +160,9 @@ const httpUsuario = {
       const usuario = await Usuario.findOne({ num_documento });
 
       if (!usuario || !bcryptjs.compareSync(password, usuario.password)) {
-        return res.status(400).json({ error: "Usuario o contraseña incorrectos" });
+        return res
+          .status(400)
+          .json({ error: "Usuario o contraseña incorrectos" });
       }
 
       if (!usuario.estado) {
@@ -154,7 +179,7 @@ const httpUsuario = {
   // Recuperar contraseña
   recuperarPassword: async (req, res) => {
     try {
-      const { correo } = req.body;
+      const { correo } = req.params;
 
       const usuario = await Usuario.findOne({ correo });
       if (!usuario) {
@@ -192,10 +217,12 @@ const httpUsuario = {
   // Confirmar código de recuperación
   confirmarCodigo: async (req, res) => {
     try {
-      const { codigo } = req.body;
+      const { codigo } = req.params;
 
       if (!codigoEnviado || codigo !== codigoEnviado.codigo) {
-        return res.status(400).json({ error: "Código incorrecto o no generado" });
+        return res
+          .status(400)
+          .json({ error: "Código incorrecto o no generado" });
       }
 
       const tiempoDiferencia = new Date() - codigoEnviado.fechaCreacion;
@@ -274,7 +301,11 @@ const httpUsuario = {
   activarUsuario: async (req, res) => {
     try {
       const { id } = req.params;
-      const usuario = await Usuario.findByIdAndUpdate(id, { estado: true }, { new: true });
+      const usuario = await Usuario.findByIdAndUpdate(
+        id,
+        { estado: true },
+        { new: true }
+      );
       if (!usuario) {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
@@ -288,7 +319,11 @@ const httpUsuario = {
   desactivarUsuario: async (req, res) => {
     try {
       const { id } = req.params;
-      const usuario = await Usuario.findByIdAndUpdate(id, { estado: false }, { new: true });
+      const usuario = await Usuario.findByIdAndUpdate(
+        id,
+        { estado: false },
+        { new: true }
+      );
       if (!usuario) {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
