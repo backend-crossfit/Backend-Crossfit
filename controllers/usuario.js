@@ -1,5 +1,8 @@
 import bcryptjs from "bcryptjs";
 import Usuario from "../models/usuario.js";
+import DatosAntropometricos from "../models/datos_antropometricos.js";
+import PerimetrosMusculares from "../models/perimetros_musculares.js";
+import PliegueCutaneo from "../models/pliegues_cutaneos.js";
 import nodemailer from "nodemailer";
 import { generarJWT } from "../middlewares/validar-jwt.js";
 
@@ -42,6 +45,45 @@ const httpUsuario = {
       res.status(500).json({ error });
     }
   },
+
+  obtenerDatosCompletos: async (req, res) => {
+    try {
+      const { idUsuario } = req.params;
+
+      // Verificar si el usuario existe
+      const usuario = await Usuario.findById(idUsuario);
+      if (!usuario) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      // Consultar datos relacionados
+      const datosAntropometricos = await DatosAntropometricos.findOne({ idUsuario }).populate('idUsuario');
+      const perimetrosMusculares = await PerimetrosMusculares.findOne({ idUsuario }).populate('idUsuario');
+      const plieguesCutaneos = await PliegueCutaneo.findOne({ idUsuario }).populate('idUsuario');
+
+
+      // Responder con los datos
+      res.status(200).json({
+        usuario: {
+          nombre: usuario.nombre,
+          apellido: usuario.apellido,
+          num_documento: usuario.num_documento,
+          correo: usuario.correo,
+          telefono: usuario.telefono,
+          estado: usuario.estado,
+        },
+        datos: {
+          antropometricos: datosAntropometricos || {},
+          perimetrosMusculares: perimetrosMusculares || {},
+          plieguesCutaneos: plieguesCutaneos || {},
+        },
+      });
+    } catch (error) {
+      console.error("Error al obtener datos del usuario:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  },
+
 
   // Crear un usuario
   crearUsuario: async (req, res) => {

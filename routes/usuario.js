@@ -10,6 +10,8 @@ const router = new Router();
 // Get all users
 router.get("/all", httpUsuario.getAll);
 
+router.get("/datos-usuario/:idUsuario", httpUsuario.obtenerDatosCompletos);
+
 // Get user by ID
 router.get(
   "/:id",
