@@ -70,6 +70,7 @@ const httpUsuario = {
           num_documento: usuario.num_documento,
           correo: usuario.correo,
           telefono: usuario.telefono,
+          _id: usuario._id,
           estado: usuario.estado,
         },
         datos: {
